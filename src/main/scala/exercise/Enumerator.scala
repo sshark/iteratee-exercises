@@ -1,8 +1,8 @@
 package exercise
 
-import iteratee.IterateeContract._
 import java.io.InputStream
-import iteratee.LazyContext
+
+import iteratee.IterateeContract._
 
 object Enumerator {
   def apply[E](e: E*): Enumerator[E] = ???

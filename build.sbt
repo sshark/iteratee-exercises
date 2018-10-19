@@ -1,12 +1,8 @@
 name := "iteratee-examples"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.12.7"
 
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+libraryDependencies += "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test"
+libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "4.3.4" % "test")
 
-libraryDependencies ++= Seq(
-    "play" %% "play" % "2.1.1",
-    "org.specs2" %% "specs2" % "1.14" % "test"
-  )
-
-
+scalacOptions in Test ++= Seq("-Yrangepos")

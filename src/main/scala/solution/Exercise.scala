@@ -1,7 +1,6 @@
 package solution
 
 import iteratee.IterateeContract._
-import java.io.InputStream
 import solution.Iteratee._
 
 object Exercise {
@@ -33,7 +32,17 @@ object Exercise {
       case Empty => Cont(step(counter))
     }
     Cont(step(0))
-  } 
+  }
+
+  def dropWhile[E](f: E => Boolean): Iteratee[E, Unit] = {
+    def step: Input[E] => Iteratee[E, Unit] = {
+      case El(e) if !f(e) => Done((), El(e))
+      case EOF => Done((), EOF)
+      case _ => dropWhile(f)
+    }
+
+    Cont(step)
+  }
 
   def sum: Iteratee[Int, Int] = {
     def step(counter: Int): Input[Int] => Iteratee[Int, Int] = {
@@ -104,6 +113,16 @@ object Exercise {
   def getElementAt[E](count: Int): Iteratee[E, Option[E]] = for {
     _ <- dropN(count)
     e <- head
+  } yield e
+
+  def drop[E](count: Int): Iteratee[E, List[E]] = for {
+    _ <- dropN(count)
+    e <- collect
+  } yield e
+
+  def drop[E](f: E => Boolean): Iteratee[E, List[E]] = for {
+    _ <- dropWhile(f)
+    e <- collect
   } yield e
 
 }

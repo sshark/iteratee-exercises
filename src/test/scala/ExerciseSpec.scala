@@ -1,12 +1,12 @@
-import org.specs2.mutable._
-import iteratee.LazyContext
 import iteratee.IterateeContract.Iteratee
+import iteratee.LazyContext
+import org.specs2.matcher.MatchResult
+import org.specs2.mutable._
 
 //uncomment this to run the tests with solution
 //import solution._
-import exercise._
-
-import Exercise._
+import solution.Exercise._
+import solution._
 
 class ExerciseSpec extends Specification {
   
@@ -18,7 +18,8 @@ class ExerciseSpec extends Specification {
   "Warming up" should {
     "count number of elements in list " in {
       val li = Enumerator(1, 2, 3, 4).apply(counter)
-      eval(li) must_== 4	
+      val res: MatchResult[Any] = eval(li) must_== 4
+      res
     }
     "sum all the numbers" in {
       val li = Enumerator(1, 2, 3, 4).apply(sum)
@@ -26,10 +27,20 @@ class ExerciseSpec extends Specification {
     }
     "find the head element'" in {
       val li = Enumerator("a", "b", "c", "d").apply(head)
-      eval(li) must_== Some("a")
+      eval(li) must beSome("a")
+    }
+    "drop first 3 elements'" in {
+      val li = Enumerator("a", "b", "c", "d")(drop(2))
+      eval(li) must_== List("c", "d")
+    }
+
+    "drop all leading 'a' elements'" in {
+      val li = Enumerator("a", "a", "a", "b", "c", "a", "d")(drop(_ == "a"))
+      eval(li) must_== List("b", "c", "a", "d")
     }
   }
-  
+
+
   class MyStream(bytes: Array[Byte]) extends java.io.ByteArrayInputStream(bytes) {
     private[this] var _isClosed = false
     def isClosed = _isClosed
@@ -38,11 +49,11 @@ class ExerciseSpec extends Specification {
       super.close()
     }
   }
-  
+
   "Reading from file" should {
     "counter bytes from file" in {
-      
-      val stream = new MyStream("1234567".getBytes())      
+
+      val stream = new MyStream("1234567".getBytes())
       val li = Enumerator.fromStream(stream).apply(counter)
       eval(li) must_== 7      
       stream.isClosed must beTrue
